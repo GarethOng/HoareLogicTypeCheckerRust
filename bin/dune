@@ -1,0 +1,4 @@
+(executable
+ (public_name RustVerifier)
+ (name main)
+ (libraries RustVerifier))
