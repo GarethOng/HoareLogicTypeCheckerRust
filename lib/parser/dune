@@ -1,0 +1,10 @@
+(menhir
+ (modules parser))
+
+(ocamllex lexer)
+
+(library
+ (name parser)
+ (libraries menhirLib)
+ (modules ast lexer parser)
+ (wrapped false))

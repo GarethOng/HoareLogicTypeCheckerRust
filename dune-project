@@ -1,26 +1,23 @@
-(lang dune 3.17)
+(lang dune 3.16)
+(using menhir 2.1)
 
 (name RustVerifier)
-
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github GarethOng/RustVerifier))
 
-(authors "Author Name <author@example.com>")
+(authors "Gareth Ong <gareth.ong@u.nus.edu>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
-
-(license LICENSE)
-
-(documentation https://url/to/documentation)
+(license MIT)
 
 (package
  (name RustVerifier)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml)
- (tags
-  ("add topics" "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
+ (synopsis "Program verifier")
+ (description "A verifier for Rust-like language with ownership model, borrowing and lifetimes")
+ (depends
+  (ocaml (>= 5))
+  (z3 (>= 4.12.2))
+  (menhir (>= 20220210))
+  (ounit2 (>= 2.2.7))
+  (dune (>= 3.8.0))))

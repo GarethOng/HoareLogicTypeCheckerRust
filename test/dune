@@ -1,2 +1,6 @@
 (test
- (name test_RustVerifier))
+ (name test_frontend)
+ (libraries 
+  ounit2 
+  parser)
+)
