@@ -94,6 +94,21 @@ let tests =
            match prog with
            | [ Block stmts ] -> assert_equal (List.length stmts) 2
            | _ -> assert_failure "Failed to parse block" );
+         (* Teset immutable reference in block scoping *)
+         ( "test_immutable_ref_block_scoping" >:: fun _ ->
+           let prog = parse_string "{ let x: i32 = 1; let y: &i32 = &x; }" in
+           match prog with
+           | [ Block stmts ] -> assert_equal (List.length stmts) 2
+           | _ -> assert_failure "Failed to parse immutable reference block" );
+         (* Teset mutable reference in block scoping *)
+         ( "test_mutable_ref_block_scoping" >:: fun _ ->
+           let prog =
+             parse_string
+               "{ let mut x: i32 = 1; let mut y: &mut i32 = &mut x; }"
+           in
+           match prog with
+           | [ Block stmts ] -> assert_equal (List.length stmts) 2
+           | _ -> assert_failure "Failed to parse mutable reference block" );
          (* Test dereferencing *)
          ( "test_dereference" >:: fun _ ->
            let prog = parse_string "let v: i32 = *p;" in
