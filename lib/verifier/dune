@@ -1,5 +1,5 @@
 (library
- (public_name RustVerifier.verifier)
  (name verifier)
- (libraries 
- ))
+ (public_name RustVerifier.verifier)
+ (libraries parser)
+ (modules environment typecheck hoare_rules ownership error))

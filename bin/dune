@@ -1,4 +1,4 @@
 (executable
  (public_name RustVerifier.main)
  (name main)
- (libraries parser))
+ (libraries parser verifier))

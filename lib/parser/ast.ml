@@ -2,6 +2,7 @@ type typ =
   | TInt (* i32 *)
   | TBool (* bool *)
   | TUnit (* () *)
+  | TPlaceholder (* () *)
   | TRef of typ (* &T *)
   | TRefMut of typ (* &mutT *)
   | TBox of typ (* □T *)

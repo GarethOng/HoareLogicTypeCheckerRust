@@ -58,13 +58,13 @@ expr:
         expr_type = TBool } }
   | id = IDENT
     { { expr_desc = Var(id);
-        expr_type = TInt } }
+        expr_type = TPlaceholder } }
   | op = unop; e = expr
     { { expr_desc = Unop(op, e);
-        expr_type = TInt } }
+        expr_type = TPlaceholder } }
   | e1 = expr; op = binop; e2 = expr
     { { expr_desc = Binop(op, e1, e2);
-        expr_type = TInt } }
+        expr_type = TPlaceholder } }
 
 %inline unop:
   | MINUS     { Neg }

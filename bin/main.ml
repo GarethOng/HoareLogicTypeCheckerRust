@@ -1,1 +1,16 @@
-let () = print_endline "Hello, World!"
+(* open Parser *)
+(* open Verifier.Typecheck *)
+(* open Verifier.Hoare_rules *)
+(* open Verifier.Error *)
+
+(* val parse_file : string -> Ast.statement list *)
+(* (** Parse a file into an AST *) *)
+(**)
+(* val process_file : string -> unit *)
+(* (** Process a file: parse and type check *) *)
+(**)
+(* val main : unit -> unit *)
+(* (** Main program entry point *) *)
+(**)
+(* (** Start the program *) *)
+(* let () = main () *)

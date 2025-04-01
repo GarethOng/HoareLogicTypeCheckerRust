@@ -25,13 +25,14 @@ rule token = parse
   (* KEYWORDS *)
   | "let"         { LET }
   | "mut"         { MUT }
-  | "move"        { MOVE }
-  | "copy"        { COPY }
-  | "box"         { BOX }
 
   (* UNOPS *)
   | "&"           { AND }
   | "!"           { NOT }
+  | "*"           { STAR }
+  | "move"        { MOVE }
+  | "copy"        { COPY }
+  | "box"         { BOX }
 
   (* BINOPS *)
 
@@ -40,7 +41,6 @@ rule token = parse
   | "||"          { OROR }
 
   (* i32 *)
-  | "*"           { STAR }
   | "+"           { PLUS }
   | "-"           { MINUS }
   | "/"           { SLASH }
