@@ -19,6 +19,7 @@ let rec type_equal t1 t2 =
   | TBool, TBool -> true
   | TRef t1', TRef t2' -> type_equal t1' t2'
   | TRefMut t1', TRefMut t2' -> type_equal t1' t2'
+  | TBox t1', TBox t2' -> type_equal t1' t2'
   | _, _ -> false
 
 (* Test cases *)
@@ -62,6 +63,66 @@ let tests =
            | _ ->
                assert_failure "Failed to parse immutable reference declaration"
          );
+         (* Test box integer declaration*)
+         ( "test_box_int_declaration" >:: fun _ ->
+           let prog = parse_string "let mut z: Box<i32> = box 42;" in
+           match prog with
+           | [ Let (true, "z", TBox TInt, expr) ] -> (
+               match expr.expr_desc with
+               | Unop (Box, { expr_desc = Int 42; expr_type = TInt }) -> ()
+               | _ -> assert_failure "Failed to parse box operation")
+           | _ -> assert_failure "Failed to parse box int declaration" );
+         (* Test box bool declaration*)
+         ( "test_box_bool_declaration" >:: fun _ ->
+           let prog = parse_string "let mut z: Box<bool> = box true;" in
+           match prog with
+           | [ Let (true, "z", TBox TBool, expr) ] -> (
+               match expr.expr_desc with
+               | Unop (Box, { expr_desc = Bool true; expr_type = TBool }) -> ()
+               | _ -> assert_failure "Failed to parse box operation")
+           | _ -> assert_failure "Failed to parse box bool declaration" );
+         (* Test box immutable reference declaration*)
+         ( "test_box_immutable_int_ref_declaration" >:: fun _ ->
+           let prog = parse_string "let mut z: Box<&i32> = box &x;" in
+           match prog with
+           | [ Let (true, "z", TBox (TRef TInt), expr1) ] -> (
+               match expr1.expr_desc with
+               | Unop
+                   ( Box,
+                     {
+                       expr_desc =
+                         Unop (Ref, { expr_desc = Var "x"; expr_type = _; _ });
+                       expr_type = _;
+                       _;
+                     } ) ->
+                   ()
+               | _ ->
+                   assert_failure
+                     "Failed to parse reference operation nested in box")
+           | _ ->
+               assert_failure
+                 "Failed to parse box immutable reference int declaration" );
+         (* Test box mutable reference declaration*)
+         ( "test_box_mutable_int_ref_declaration" >:: fun _ ->
+           let prog = parse_string "let mut z: Box<&mut i32> = box &mut x;" in
+           match prog with
+           | [ Let (true, "z", TBox (TRefMut TInt), expr1) ] -> (
+               match expr1.expr_desc with
+               | Unop
+                   ( Box,
+                     {
+                       expr_desc =
+                         Unop (RefMut, { expr_desc = Var "x"; expr_type = _; _ });
+                       expr_type = _;
+                       _;
+                     } ) ->
+                   ()
+               | _ ->
+                   assert_failure
+                     "Failed to parse reference operation nested in box")
+           | _ ->
+               assert_failure
+                 "Failed to parse box mutable reference int declaration" );
          (* Test arithmetic operations *)
          ( "test_arithmetic" >:: fun _ ->
            let prog = parse_string "let a: i32 = 10 + 5;" in
