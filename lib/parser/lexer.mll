@@ -10,17 +10,36 @@ let whitespace = [' ' '\t' '\n']
 
 rule token = parse
   | whitespace    { token lexbuf }
+
+  (*TYPE ANNOTATIONS *)
+  | "i32"         { I32 }
+  | "bool"        { BOOL }
+  | "Box"         { TBOX }
+  | ":"           { COLON }
+
+  (* VALUES *)
   | digit+ as n   { INT(int_of_string n) }
   | "true"        { TRUE }
   | "false"       { FALSE }
+
+  (* KEYWORDS *)
   | "let"         { LET }
   | "mut"         { MUT }
-  | "i32"         { I32 }
-  | "bool"        { BOOL }
+  | "move"        { MOVE }
+  | "copy"        { COPY }
+  | "box"         { BOX }
+
+  (* UNOPS *)
   | "&"           { AND }
+  | "!"           { NOT }
+
+  (* BINOPS *)
+
+  (* bool *)
   | "&&"          { ANDAND }
   | "||"          { OROR }
-  | "!"           { NOT }
+
+  (* i32 *)
   | "*"           { STAR }
   | "+"           { PLUS }
   | "-"           { MINUS }
@@ -31,9 +50,10 @@ rule token = parse
   | "<="          { LE }
   | ">="          { GE }
   | "=="          { EQ }
+
+  (* bool/i32 *)
   | "!="          { NE }
   | "="           { ASSIGN }
-  | ":"           { COLON }
   | ";"           { SEMI }
   | "{"           { LBRACE }
   | "}"           { RBRACE }

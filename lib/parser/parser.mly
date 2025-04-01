@@ -2,10 +2,17 @@
 open Ast
 %}
 
+(*TYPES*)
+%token I32 BOOL TBOX
+
+(*VALUES*)
+
 %token <int> INT
 %token <string> IDENT
 %token TRUE FALSE
-%token LET MUT I32 BOOL
+
+(*KEYWORDS*)
+%token LET MUT MOVE COPY BOX
 %token AND ANDAND OROR NOT STAR
 %token PLUS MINUS SLASH PERCENT
 %token LT GT LE GE EQ NE
@@ -36,6 +43,8 @@ type_expr:
     { TRef(t) }
   | AND; MUT; t = type_expr 
     { TRefMut(t) }
+  | TBOX; LT; t = type_expr; GT   
+    { TBox(t) }
 
 expr:
   | i = INT
@@ -63,6 +72,9 @@ expr:
   | AND       { Ref }
   | AND; MUT  { RefMut }
   | STAR      { Deref }
+  | MOVE      { Move }
+  | BOX       { Box }
+  | COPY      { Copy }
 
 %inline binop:
   | PLUS      { Add }
