@@ -135,4 +135,26 @@ module Environment = struct
               non_outliving_lifetimes
           in
           has_mut_ref
+
+  let remove_lifetime env lifetime =
+    env.lifetime_ctx <-
+      {
+        env.lifetime_ctx with
+        alive = List.filter (fun l -> l <> lifetime) env.lifetime_ctx.alive;
+      };
+
+    env.lifetime_ctx <-
+      {
+        env.lifetime_ctx with
+        outlives =
+          List.filter
+            (fun (l1, l2) -> l1 <> lifetime && l2 <> lifetime)
+            env.lifetime_ctx.outlives;
+      };
+
+    Hashtbl.filter_map_inplace
+      (fun _name l -> if l = lifetime then None else Some l)
+      env.lifetime_to_name
+
+  let alive env lifetime = List.mem lifetime env.lifetime_ctx.alive
 end
