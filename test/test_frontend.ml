@@ -3,7 +3,6 @@ open Ast
 
 (* ======== Test Utilities ======== *)
 
-(** Helper function to parse a string *)
 let parse_string s =
   let lexbuf = Lexing.from_string s in
   try Parser.program Lexer.token lexbuf with
@@ -14,7 +13,6 @@ let parse_string s =
         ^ ": Unexpected token '" ^ Lexing.lexeme lexbuf ^ "'")
   | Lexer.LexError msg -> failwith ("Lexer error: " ^ msg)
 
-(** Helper function to compare types *)
 let rec type_equal t1 t2 =
   match (t1, t2) with
   | TInt, TInt -> true
@@ -24,7 +22,6 @@ let rec type_equal t1 t2 =
   | TBox t1', TBox t2' -> type_equal t1' t2'
   | _, _ -> false
 
-(** Helper for testing variable declarations *)
 let assert_var_decl prog name mut type_val expr_desc expr_type =
   match prog with
   | [ Let (m, n, t, e) ] ->
@@ -37,7 +34,6 @@ let assert_var_decl prog name mut type_val expr_desc expr_type =
 
 (* ======== Test Groups ======== *)
 
-(** Basic declaration tests *)
 let declaration_tests =
   "declaration_tests"
   >::: [
@@ -49,7 +45,6 @@ let declaration_tests =
            assert_var_decl prog "y" false TBool (Bool true) TBool );
        ]
 
-(** Reference tests *)
 let reference_tests =
   "reference_tests"
   >::: [
@@ -138,7 +133,6 @@ let box_tests =
                  "Failed to parse box mutable reference int declaration" );
        ]
 
-(** Operation tests *)
 let operation_tests =
   "operation_tests"
   >::: [
@@ -166,7 +160,6 @@ let operation_tests =
            | _ -> assert_failure "Failed to parse logical declaration" );
        ]
 
-(** Block scope tests *)
 let block_tests =
   "block_tests"
   >::: [
@@ -190,7 +183,6 @@ let block_tests =
            | _ -> assert_failure "Failed to parse mutable reference block" );
        ]
 
-(** Error case tests *)
 let error_tests =
   "error_tests"
   >::: [
