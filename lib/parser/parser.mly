@@ -12,7 +12,7 @@ open Ast
 %token TRUE FALSE
 
 (*KEYWORDS*)
-%token LET MUT MOVE COPY BOX
+%token LET MUT MOVE COPY BOX ENDLIFETIME
 %token AND ANDAND OROR NOT STAR
 %token PLUS MINUS SLASH PERCENT
 %token LT GT LE GE EQ NE
@@ -67,14 +67,15 @@ expr:
         expr_type = TPlaceholder } }
 
 %inline unop:
-  | MINUS     { Neg }
-  | NOT       { Not }
-  | AND       { Ref }
-  | AND; MUT  { RefMut }
-  | STAR      { Deref }
-  | MOVE      { Move }
-  | BOX       { Box }
-  | COPY      { Copy }
+  | MINUS       { Neg }
+  | NOT         { Not }
+  | AND         { Ref }
+  | AND; MUT    { RefMut }
+  | STAR        { Deref }
+  | MOVE        { Move }
+  | BOX         { Box }
+  | COPY        { Copy }
+  | ENDLIFETIME { EndLifetime }
 
 %inline binop:
   | PLUS      { Add }

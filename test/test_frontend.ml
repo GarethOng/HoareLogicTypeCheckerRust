@@ -75,6 +75,15 @@ let reference_tests =
                | Unop (Deref, { expr_desc = Var "p"; _ }) -> ()
                | _ -> assert_failure "Failed to parse dereference operation")
            | _ -> assert_failure "Failed to parse dereference" );
+         ( "test_endlifetime_lvalue" >:: fun _ ->
+           let prog = parse_string "endlifetime x;" in
+           match prog with
+           | [
+            Expr
+              { expr_desc = Unop (EndLifetime, { expr_desc = Var "x"; _ }); _ };
+           ] ->
+               ()
+           | _ -> assert_failure "Failed to parse endlifetime operation" );
        ]
 
 (** Box tests *)

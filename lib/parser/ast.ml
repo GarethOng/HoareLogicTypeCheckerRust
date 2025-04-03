@@ -34,6 +34,7 @@ type unop =
   | Move (* move *)
   | Box (* box *)
   | Copy (* copy *)
+  | EndLifetime (* End lifetime of L-Value*)
 
 type expr = { expr_desc : expr_desc; expr_type : typ }
 

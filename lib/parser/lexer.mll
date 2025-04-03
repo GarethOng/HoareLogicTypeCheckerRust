@@ -33,6 +33,7 @@ rule token = parse
   | "move"        { MOVE }
   | "copy"        { COPY }
   | "box"         { BOX }
+  | "endlifetime" { ENDLIFETIME }
 
   (* BINOPS *)
 
