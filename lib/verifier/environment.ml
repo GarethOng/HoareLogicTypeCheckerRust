@@ -60,8 +60,14 @@ module Environment = struct
       in
       if overlapping = [] then None else Some overlapping
 
+  let alive env lifetime = List.mem lifetime env.lifetime_ctx.alive
+
   let lookup env name =
     try Some (Hashtbl.find env.bindings name) with Not_found -> None
+
+  let lifetime_to_var_name env lifetime =
+    try Some (Hashtbl.find env.lifetime_to_name lifetime)
+    with Not_found -> None
 
   let exists env name = Hashtbl.mem env.bindings name
   let remove_binding env name = Hashtbl.remove env.bindings name
@@ -103,6 +109,9 @@ module Environment = struct
     match lookup env name with
     | Some binding -> Some binding.lifetime
     | None -> None
+
+  let is_var_alive env name =
+    match lifetime_of env name with None -> false | Some lt -> alive env lt
 
   let get_lifetime_context env = env.lifetime_ctx
 
@@ -155,6 +164,4 @@ module Environment = struct
     Hashtbl.filter_map_inplace
       (fun _name l -> if l = lifetime then None else Some l)
       env.lifetime_to_name
-
-  let alive env lifetime = List.mem lifetime env.lifetime_ctx.alive
 end

@@ -2,4 +2,4 @@
  (name verifier)
  (public_name RustVerifier.verifier)
  (libraries parser)
- (modules environment typecheck hoare_rules error))
+ (modules environment typecheck error))
