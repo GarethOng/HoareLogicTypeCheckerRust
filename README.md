@@ -2,92 +2,46 @@
 
 ## Core Syntax
 
-$$
-\begin{align*}
-    \text{Lifetime, } \kappa ::= & \textbf{static} \mid \alpha \\
-    \text{Access Modifier, } \mu ::= & \textbf{mut} \mid \textbf{shr} \\
-    \text{L-Value, } \overset{\leftharpoonup}{v} ::= & x \mid * \overset{\leftharpoonup}{v}\\
-    \text{Value, } v ::= & z \mid true \mid false \mid \ell \\
-    \text{Type} \ni \tau ::= & \textbf{bool} \mid \textbf{int} \mid \square \; \tau
-        \mid \&^{\mu} \tau \mid \langle \tau \rangle^{\kappa} \mid () \\
-    \text{Lifetime Context, } \Psi ::= & (\mathcal{L}, \preceq) \\
-    \text{Expression} \ni e ::= &\: v \mid \text{let mut } x = e
-        \mid \text{move } \overset{\leftharpoonup}{v} \mid \text{copy } \overset{\leftharpoonup}{v}  \\
-        & \mid \overset{\leftharpoonup}{v} = e \mid \text{box } e \mid \& \overset{\leftharpoonup}{v} \mid \& \text{mut } \overset{\leftharpoonup}{v} \\
-        & \mid \text{endLifetime } x \\
-        & \mid e_1 + e_2 \mid e_1 - e_2
-        \mid e_1 \leq e_2 \mid e_1 == e_2  \\
-        &\mid \{ e_1; e_2; ...; e_n \}
-\end{align*}
-$$
+![Core Syntax](https://latex.codecogs.com/png.latex?%5Cbegin%7Balign*%7D%0A%20%20%20%20%5Ctext%7BLifetime%2C%20%7D%20%5Ckappa%20%3A%3A%3D%20%26%20%5Ctextbf%7Bstatic%7D%20%5Cmid%20%5Calpha%20%5C%5C%0A%20%20%20%20%5Ctext%7BAccess%20Modifier%2C%20%7D%20%5Cmu%20%3A%3A%3D%20%26%20%5Ctextbf%7Bmut%7D%20%5Cmid%20%5Ctextbf%7Bshr%7D%20%5C%5C%0A%20%20%20%20%5Ctext%7BL-Value%2C%20%7D%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%3A%3A%3D%20%26%20x%20%5Cmid%20*%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%5C%5C%0A%20%20%20%20%5Ctext%7BValue%2C%20%7D%20v%20%3A%3A%3D%20%26%20z%20%5Cmid%20true%20%5Cmid%20false%20%5Cmid%20%5Cell%20%5C%5C%0A%20%20%20%20%5Ctext%7BType%7D%20%5Cni%20%5Ctau%20%3A%3A%3D%20%26%20%5Ctextbf%7Bbool%7D%20%5Cmid%20%5Ctextbf%7Bint%7D%20%5Cmid%20%5Csquare%20%5C%3B%20%5Ctau%0A%20%20%20%20%20%20%20%20%5Cmid%20%5C%26%5E%7B%5Cmu%7D%20%5Ctau%20%5Cmid%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ckappa%7D%20%5Cmid%20%28%29%20%5C%5C%0A%20%20%20%20%5Ctext%7BLifetime%20Context%2C%20%7D%20%5CPsi%20%3A%3A%3D%20%26%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%20%5C%5C%0A%20%20%20%20%5Ctext%7BExpression%7D%20%5Cni%20e%20%3A%3A%3D%20%26%5C%3A%20v%20%5Cmid%20%5Ctext%7Blet%20mut%20%7D%20x%20%3D%20e%0A%20%20%20%20%20%20%20%20%5Cmid%20%5Ctext%7Bmove%20%7D%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%5Cmid%20%5Ctext%7Bcopy%20%7D%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%20%5C%5C%0A%20%20%20%20%20%20%20%20%26%20%5Cmid%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%3D%20e%20%5Cmid%20%5Ctext%7Bbox%20%7D%20e%20%5Cmid%20%5C%26%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%5Cmid%20%5C%26%20%5Ctext%7Bmut%20%7D%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%5C%5C%0A%20%20%20%20%20%20%20%20%26%20%5Cmid%20%5Ctext%7BendLifetime%20%7D%20x%20%5C%5C%0A%20%20%20%20%20%20%20%20%26%20%5Cmid%20e_1%20%2B%20e_2%20%5Cmid%20e_1%20-%20e_2%0A%20%20%20%20%20%20%20%20%5Cmid%20e_1%20%5Cleq%20e_2%20%5Cmid%20e_1%20%3D%3D%20e_2%20%20%5C%5C%0A%20%20%20%20%20%20%20%20%26%5Cmid%20%5C%7B%20e_1%3B%20e_2%3B%20...%3B%20e_n%20%5C%7D%0A%5Cend%7Balign*%7D)
 
 ## Hoare Forward Rules
 
-$$
-% int rule
-\frac{}{\{ \Psi, \Delta \} \; z \; \{ \textbf{ens}[r]{ \Psi, \Delta \land r:\mathbf{int}}\}} \quad \text{(int)}
-$$
+### Basic Rules
 
-$$
-% true rule
-\frac{}{\{ \Psi, \Delta \} \; true \; \{ \textbf{ens}[r]{ \Psi, \Delta \land r:\mathbf{bool}}\}} \quad \text{(true)}
-$$
+![Int Rule](https://latex.codecogs.com/png.latex?%5Cfrac%7B%7D%7B%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20z%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r%3A%5Cmathbf%7Bint%7D%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28int%29%7D)
 
-$$
-% false rule
-\frac{}{\{ \Psi, \Delta \} \; false \; \{ \textbf{ens}[r]{ \Psi, \Delta \land r:\mathbf{bool}}\}} \quad \text{(false)}
-$$
+![True Rule](https://latex.codecogs.com/png.latex?%5Cfrac%7B%7D%7B%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20true%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r%3A%5Cmathbf%7Bbool%7D%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28true%29%7D)
 
-$$
-% box rule
-\frac{\{ \Psi, \Delta \} \; e \; \{ \textbf{ens}[r_1]{ \Psi, \Delta \land r_1:\tau}\}}
-{\{ \Psi, \Delta \} \; \text{box } e \; \{ \textbf{ens}[r_2]{ \Psi, \Delta \land r_2:\square \; \tau }\}} \quad \text{(box)}
-$$
+![False Rule](https://latex.codecogs.com/png.latex?%5Cfrac%7B%7D%7B%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20false%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r%3A%5Cmathbf%7Bbool%7D%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28false%29%7D)
 
-$$
-% let-create-lifetime rule
-\frac{\textit{fresh } \texttt{'a} \quad \{ \Psi, \Delta \} \; e \; \{ \textbf{ens}[r_1]{ \Psi, \Delta \land r_1 : \tau }\} \quad \neg \text{RefType} (\tau) \quad \Psi_1 \equiv (\mathcal{L} \cup \{ \texttt{'a} \}, \preceq)}
-{\{ (\mathcal{L}, \preceq), \Delta \} \; \text{let mut } x = e \; \{ \textbf{ens}[r_2]{ \Psi_1, \Delta \land x: \langle \tau \rangle^{\texttt{'a}} \land r_2 : () }\}} \quad \text{(let-create-lifetime)}
-$$
+### Box Rule
 
-$$
-% let-propagate-lifetime rule
-\frac{\{ \Psi, \Delta \} \; e \; \{ \textbf{ens}[r_1]{ \Psi_1, \Delta_1 }\}}
-{\{\Psi, \Delta \} \; \text{let mut } x = e \; \{ \textbf{ens}[r_2]{ \Psi_1, [r_1 := x]\Delta_1 \land r_2 : () }\}} \quad \text{(let-propagate-lifetime)}
-$$
+![Box Rule](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_1%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r_1%3A%5Ctau%7D%5C%7D%7D%7B%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5Ctext%7Bbox%20%7D%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_2%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r_2%3A%5Csquare%20%5C%3B%20%5Ctau%20%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28box%29%7D)
 
-$$
-% de-reference rule
-\frac{\Delta \vdash \overset{\leftharpoonup}{v} : \langle \square \; \tau \rangle^{\texttt{'a}} \lor \overset{\leftharpoonup}{v} : \langle \&^{\mu} \tau \rangle^{\texttt{'a}}}
-{\Delta \vdash * \overset{\leftharpoonup}{v} : \langle \tau \rangle^{\texttt{'a}}} \quad \text{(de-reference)}
-$$
+### Lifetime Rules
 
-$$
-% endlifetime rule
-\frac{\Delta \vdash x: \langle \tau \rangle^{\texttt{'a}} \quad \texttt{'a} \in \mathcal{L} \quad \Psi_1 \equiv (\mathcal{L} \setminus \{ \texttt{'a} \}, \preceq)}
-{\{ (\mathcal{L}, \preceq), \Delta \} \; \text{endLifetime } {x}\; \{ \textbf{ens}[r]{ \Psi_1, \Delta \land r: ()} \}} \quad \text{(endlifetime)}
-$$
+![Let Create Lifetime](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctextit%7Bfresh%20%7D%20%5Ctexttt%7B%27a%7D%20%5Cquad%20%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_1%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r_1%20%3A%20%5Ctau%20%7D%5C%7D%20%5Cquad%20%5Cneg%20%5Ctext%7BRefType%7D%20%28%5Ctau%29%20%5Cquad%20%5CPsi_1%20%5Cequiv%20%28%5Cmathcal%7BL%7D%20%5Ccup%20%5C%7B%20%5Ctexttt%7B%27a%7D%20%5C%7D%2C%20%5Cpreceq%29%7D%7B%5C%7B%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5Ctext%7Blet%20mut%20%7D%20x%20%3D%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_2%5D%7B%20%5CPsi_1%2C%20%5CDelta%20%5Cland%20x%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%20%5Cland%20r_2%20%3A%20%28%29%20%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28let-create-lifetime%29%7D)
 
-$$
-% move rule
-\frac{\textit{fresh } \texttt{'b} \quad \neg \text{readProhibited}(\Psi, \Delta, x, \texttt{'a}) \quad \Psi_1 \equiv ((\mathcal{L} \setminus \{ \texttt{'a} \}) \cup \{ \texttt{'b} \}, \preceq)}
-{\{ (\mathcal{L}, \preceq), \Delta \} \; \text{move } x \; \{ \textbf{ens}[r]{ \Psi_1, \Delta \land r: \langle \tau \rangle^{\texttt{'b}} }\}} \quad \text{(move)}
-$$
+![Let Propagate Lifetime](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_1%5D%7B%20%5CPsi_1%2C%20%5CDelta_1%20%7D%5C%7D%7D%7B%5C%7B%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5Ctext%7Blet%20mut%20%7D%20x%20%3D%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_2%5D%7B%20%5CPsi_1%2C%20%5Br_1%20%3A%3D%20x%5D%5CDelta_1%20%5Cland%20r_2%20%3A%20%28%29%20%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28let-propagate-lifetime%29%7D)
 
-$$
-% immutable-borrow rule
-\frac{\textit{fresh } \texttt{'b} \quad \Delta \vdash \overset{\leftharpoonup}{v}: \langle \tau \rangle^{\texttt{'a}} \quad \neg \text{readProhibited}(\Psi, \Delta, \overset{\leftharpoonup}{v}, \texttt{'a}) \quad \Psi_1 \equiv (\mathcal{L} \cup \{ \texttt{'b} \}, \preceq \cup \{ (\texttt{'a, 'b}) \})}
-{\{ (\mathcal{L}, \preceq), \Delta \} \; \& \overset{\leftharpoonup}{v} \; \{ \textbf{ens}[r]{ \Psi_1, \Delta \land r: \langle \&^{\textbf{shr}} \tau \rangle^{\texttt{'b}}} \}} \quad \text{(shr-borrow)}
-$$
+### Dereferencing Rule
 
-$$
-% mutable-borrow rule
-\frac{\textit{fresh } \texttt{'b} \quad \Delta \vdash \overset{\leftharpoonup}{v}: \langle \tau \rangle^{\texttt{'a}} \quad \neg \text{writeProhibited}(\Psi, \Delta, \overset{\leftharpoonup}{v}, \texttt{'a}) \quad \Psi_1 \equiv (\mathcal{L} \cup \{ \texttt{'b} \}, \preceq \cup \{ (\texttt{'a, 'b}) \})}
-{\{ (\mathcal{L}, \preceq), \Delta \} \; \&\text{mut } \overset{\leftharpoonup}{v} \; \{ \textbf{ens}[r]{ \Psi_1, \Delta \land r: \langle \&^{\textbf{mut}} \tau \rangle^{\texttt{'b}}} \}} \quad \text{(mutable-borrow)}
-$$
+![Dereference](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5CDelta%20%5Cvdash%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%3A%20%5Clangle%20%5Csquare%20%5C%3B%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%20%5Clor%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%3A%20%5Clangle%20%5C%26%5E%7B%5Cmu%7D%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%7D%7B%5CDelta%20%5Cvdash%20*%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%7D%20%5Cquad%20%5Ctext%7B%28de-reference%29%7D)
 
-$$
-% assignment rule
-\frac{\Delta \vdash \overset{\leftharpoonup}{v}: \langle \tau \rangle^{a} \quad \{ \Psi, \Delta \} \; e \; \{ \textbf{ens}[r_1]{ \Psi, \Delta \land r_1:\tau}\} \quad \neg \text{writeProhibited}(\Psi, \Delta, \overset{\leftharpoonup}{v}, a)}
-{\{ (\mathcal{L}, \preceq), \Delta \} \; \overset{\leftharpoonup}{v} = e \; \{ \textbf{ens}[r_2]{ \Psi, \Delta \land r_2:() }\}} \quad \text{(assignment)}
-$$
+### End Lifetime Rule
+
+![End Lifetime](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5CDelta%20%5Cvdash%20x%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%20%5Cquad%20%5Ctexttt%7B%27a%7D%20%5Cin%20%5Cmathcal%7BL%7D%20%5Cquad%20%5CPsi_1%20%5Cequiv%20%28%5Cmathcal%7BL%7D%20%5Csetminus%20%5C%7B%20%5Ctexttt%7B%27a%7D%20%5C%7D%2C%20%5Cpreceq%29%7D%7B%5C%7B%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5Ctext%7BendLifetime%20%7D%20%7Bx%7D%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi_1%2C%20%5CDelta%20%5Cland%20r%3A%28%29%7D%20%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28endlifetime%29%7D)
+
+### Move Rule
+
+![Move](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctextit%7Bfresh%20%7D%20%5Ctexttt%7B%27b%7D%20%5Cquad%20%5Cneg%20%5Ctext%7BreadProhibited%7D%28%5CPsi%2C%20%5CDelta%2C%20x%2C%20%5Ctexttt%7B%27a%7D%29%20%5Cquad%20%5CPsi_1%20%5Cequiv%20%28%28%5Cmathcal%7BL%7D%20%5Csetminus%20%5C%7B%20%5Ctexttt%7B%27a%7D%20%5C%7D%29%20%5Ccup%20%5C%7B%20%5Ctexttt%7B%27b%7D%20%5C%7D%2C%20%5Cpreceq%29%7D%7B%5C%7B%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5Ctext%7Bmove%20%7D%20x%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi_1%2C%20%5CDelta%20%5Cland%20r%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27b%7D%7D%20%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28move%29%7D)
+
+### Borrow Rules
+
+![Immutable Borrow](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctextit%7Bfresh%20%7D%20%5Ctexttt%7B%27b%7D%20%5Cquad%20%5CDelta%20%5Cvdash%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%20%5Cquad%20%5Cneg%20%5Ctext%7BreadProhibited%7D%28%5CPsi%2C%20%5CDelta%2C%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%2C%20%5Ctexttt%7B%27a%7D%29%20%5Cquad%20%5CPsi_1%20%5Cequiv%20%28%5Cmathcal%7BL%7D%20%5Ccup%20%5C%7B%20%5Ctexttt%7B%27b%7D%20%5C%7D%2C%20%5Cpreceq%20%5Ccup%20%5C%7B%20%28%5Ctexttt%7B%27a%2C%20%27b%7D%29%20%5C%7D%29%7D%7B%5C%7B%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5C%26%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi_1%2C%20%5CDelta%20%5Cland%20r%3A%20%5Clangle%20%5C%26%5E%7B%5Ctextbf%7Bshr%7D%7D%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27b%7D%7D%7D%20%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28shr-borrow%29%7D)
+
+![Mutable Borrow](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctextit%7Bfresh%20%7D%20%5Ctexttt%7B%27b%7D%20%5Cquad%20%5CDelta%20%5Cvdash%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27a%7D%7D%20%5Cquad%20%5Cneg%20%5Ctext%7BwriteProhibited%7D%28%5CPsi%2C%20%5CDelta%2C%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%2C%20%5Ctexttt%7B%27a%7D%29%20%5Cquad%20%5CPsi_1%20%5Cequiv%20%28%5Cmathcal%7BL%7D%20%5Ccup%20%5C%7B%20%5Ctexttt%7B%27b%7D%20%5C%7D%2C%20%5Cpreceq%20%5Ccup%20%5C%7B%20%28%5Ctexttt%7B%27a%2C%20%27b%7D%29%20%5C%7D%29%7D%7B%5C%7B%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5C%26%5Ctext%7Bmut%20%7D%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br%5D%7B%20%5CPsi_1%2C%20%5CDelta%20%5Cland%20r%3A%20%5Clangle%20%5C%26%5E%7B%5Ctextbf%7Bmut%7D%7D%20%5Ctau%20%5Crangle%5E%7B%5Ctexttt%7B%27b%7D%7D%7D%20%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28mutable-borrow%29%7D)
+
+### Assignment Rule
+
+![Assignment](https://latex.codecogs.com/png.latex?%5Cfrac%7B%5CDelta%20%5Cvdash%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%3A%20%5Clangle%20%5Ctau%20%5Crangle%5E%7Ba%7D%20%5Cquad%20%5C%7B%20%5CPsi%2C%20%5CDelta%20%5C%7D%20%5C%3B%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_1%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r_1%3A%5Ctau%7D%5C%7D%20%5Cquad%20%5Cneg%20%5Ctext%7BwriteProhibited%7D%28%5CPsi%2C%20%5CDelta%2C%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%2C%20a%29%7D%7B%5C%7B%20%28%5Cmathcal%7BL%7D%2C%20%5Cpreceq%29%2C%20%5CDelta%20%5C%7D%20%5C%3B%20%5Coverset%7B%5Cleftharpoonup%7D%7Bv%7D%20%3D%20e%20%5C%3B%20%5C%7B%20%5Ctextbf%7Bens%7D%5Br_2%5D%7B%20%5CPsi%2C%20%5CDelta%20%5Cland%20r_2%3A%28%29%20%7D%5C%7D%7D%20%5Cquad%20%5Ctext%7B%28assignment%29%7D)
