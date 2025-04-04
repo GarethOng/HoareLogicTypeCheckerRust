@@ -1,4 +1,4 @@
-# RustVerifier
+# Hoare Logic for Type Checking
 
 ## Core Syntax
 
