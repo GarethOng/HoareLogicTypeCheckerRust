@@ -30,11 +30,11 @@ program:
 statement:
   | LET; mut = boption(MUT); id = IDENT; COLON; typ = type_expr; 
     ASSIGN; e = expr; SEMI
-    { Let(mut, id, typ, e) }
+    { Let(mut, id, typ, e, { loc_start = $startpos; loc_end = $endpos }) }
   | e = expr; SEMI
-    { Expr(e) }
+    { Expr(e, { loc_start = e.expr_loc.loc_start; loc_end = $endpos }) }
   | LBRACE; stmts = list(statement); RBRACE
-    { Block(stmts) }
+    { Block(stmts, { loc_start = $startpos; loc_end = $endpos }) }
 
 type_expr:
   | I32            { TInt }
@@ -49,22 +49,28 @@ type_expr:
 expr:
   | i = INT
     { { expr_desc = Int(i); 
-        expr_type = TInt } }
+        expr_type = TInt;
+        expr_loc = { loc_start = $startpos; loc_end = $endpos } } }
   | TRUE 
     { { expr_desc = Bool(true);
-        expr_type = TBool } }
+        expr_type = TBool;
+        expr_loc = { loc_start = $startpos; loc_end = $endpos } } }
   | FALSE
     { { expr_desc = Bool(false);
-        expr_type = TBool } }
+        expr_type = TBool;
+        expr_loc = { loc_start = $startpos; loc_end = $endpos } } }
   | id = IDENT
     { { expr_desc = Var(id);
-        expr_type = TPlaceholder } }
+        expr_type = TPlaceholder;
+        expr_loc = { loc_start = $startpos; loc_end = $endpos } } }
   | op = unop; e = expr
     { { expr_desc = Unop(op, e);
-        expr_type = TPlaceholder } }
+        expr_type = TPlaceholder;
+        expr_loc = { loc_start = $startpos; loc_end = $endpos } } }
   | e1 = expr; op = binop; e2 = expr
     { { expr_desc = Binop(op, e1, e2);
-        expr_type = TPlaceholder } }
+        expr_type = TPlaceholder; 
+        expr_loc = { loc_start = e1.expr_loc.loc_start; loc_end = e2.expr_loc.loc_end } } } 
 
 %inline unop:
   | MINUS       { Neg }

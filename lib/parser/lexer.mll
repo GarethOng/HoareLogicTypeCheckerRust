@@ -6,11 +6,11 @@ exception LexError of string
 let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha|digit|'_')*
-let whitespace = [' ' '\t' '\n']
+let whitespace = [' ' '\t']
 
 rule token = parse
   | whitespace    { token lexbuf }
-
+  | '\n'          { Lexing.new_line lexbuf; token lexbuf }
   (*TYPE ANNOTATIONS *)
   | "i32"         { I32 }
   | "bool"        { BOOL }

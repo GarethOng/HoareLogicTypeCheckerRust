@@ -17,7 +17,7 @@ module Error = struct
     | ReadProhibitedError
     | MoveNonLValueError
 
-  exception TypeError of error_type * Lexing.position option
+  exception TypeError of error_type * Ast.location
 
   let rec string_of_type (typ : Ast.typ) : string =
     match typ with
@@ -60,15 +60,23 @@ module Error = struct
     | Copy -> "copy "
     | EndLifetime -> "endlifetime "
 
-  let location_string (pos : Lexing.position option) : string =
-    match pos with
-    | Some pos ->
-        Printf.sprintf "line %d, character %d" pos.pos_lnum
-          (pos.pos_cnum - pos.pos_bol)
-    | None -> "unknown location"
+  let position_string (pos : Lexing.position) : string =
+    Printf.sprintf "line %d, character %d" pos.pos_lnum
+      (pos.pos_cnum - pos.pos_bol + 1)
 
-  let error_message (err : error_type) (pos : Lexing.position option) : string =
-    let loc_str = location_string pos in
+  let location_string (loc : Ast.location) : string =
+    let start_str = position_string loc.loc_start in
+    let end_str = position_string loc.loc_end in
+    if start_str = end_str then Printf.sprintf "at %s" start_str
+    else (* Crude span for single line errors *)
+      let end_char = loc.loc_end.pos_cnum - loc.loc_end.pos_bol + 1 in
+      if loc.loc_start.pos_lnum = loc.loc_end.pos_lnum then
+        Printf.sprintf "from %s to character %d" start_str end_char
+      else (* Span across lines *)
+        Printf.sprintf "from %s to %s" start_str end_str
+
+  let error_message (err : error_type) (loc : Ast.location) : string =
+    let loc_str = location_string loc in
     match err with
     | TypeError (expected, actual) ->
         Printf.sprintf "At %s: Type error - expected %s but got %s" loc_str
@@ -105,8 +113,8 @@ module Error = struct
     | MoveNonLValueError ->
         Printf.sprintf "At %s: Attempting to move non L-Value" loc_str
 
-  let report_error (err : error_type) (pos : Lexing.position option) : unit =
-    prerr_endline (error_message err pos)
+  let report_error (err : error_type) (loc : Ast.location) : unit =
+    prerr_endline (error_message err loc)
 
-  let raise_error err pos = raise (TypeError (err, pos))
+  let raise_error err loc = raise (TypeError (err, loc))
 end

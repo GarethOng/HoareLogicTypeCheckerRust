@@ -24,7 +24,7 @@ let rec type_equal t1 t2 =
 
 let assert_var_decl prog name mut type_val expr_desc expr_type =
   match prog with
-  | [ Let (m, n, t, e) ] ->
+  | [ Let (m, n, t, e, _) ] ->
       assert_equal m mut;
       assert_equal n name;
       assert (type_equal t type_val);
@@ -51,7 +51,7 @@ let reference_tests =
          ( "test_immutable_ref" >:: fun _ ->
            let prog = parse_string "let w: &i32 = &x;" in
            match prog with
-           | [ Let (false, "w", TRef TInt, expr) ] -> (
+           | [ Let (false, "w", TRef TInt, expr, _) ] -> (
                match expr.expr_desc with
                | Unop (Ref, { expr_desc = Var "x"; _ }) -> ()
                | _ -> assert_failure "Failed to parse reference operation")
@@ -61,7 +61,7 @@ let reference_tests =
          ( "test_mutable_ref" >:: fun _ ->
            let prog = parse_string "let mut z: &mut i32 = &mut x;" in
            match prog with
-           | [ Let (true, "z", TRefMut TInt, expr) ] -> (
+           | [ Let (true, "z", TRefMut TInt, expr, _) ] -> (
                match expr.expr_desc with
                | Unop (RefMut, { expr_desc = Var "x"; _ }) -> ()
                | _ -> assert_failure "Failed to parse reference operation")
@@ -70,7 +70,7 @@ let reference_tests =
          ( "test_dereference" >:: fun _ ->
            let prog = parse_string "let v: i32 = *p;" in
            match prog with
-           | [ Let (false, "v", TInt, expr) ] -> (
+           | [ Let (false, "v", TInt, expr, _) ] -> (
                match expr.expr_desc with
                | Unop (Deref, { expr_desc = Var "p"; _ }) -> ()
                | _ -> assert_failure "Failed to parse dereference operation")
@@ -80,7 +80,8 @@ let reference_tests =
            match prog with
            | [
             Expr
-              { expr_desc = Unop (EndLifetime, { expr_desc = Var "x"; _ }); _ };
+              ( { expr_desc = Unop (EndLifetime, { expr_desc = Var "x"; _ }); _ },
+                _ );
            ] ->
                ()
            | _ -> assert_failure "Failed to parse endlifetime operation" );
@@ -93,23 +94,24 @@ let box_tests =
          ( "test_box_int_declaration" >:: fun _ ->
            let prog = parse_string "let mut z: Box<i32> = box 42;" in
            match prog with
-           | [ Let (true, "z", TBox TInt, expr) ] -> (
+           | [ Let (true, "z", TBox TInt, expr, _) ] -> (
                match expr.expr_desc with
-               | Unop (Box, { expr_desc = Int 42; expr_type = TInt }) -> ()
+               | Unop (Box, { expr_desc = Int 42; expr_type = TInt; _ }) -> ()
                | _ -> assert_failure "Failed to parse box operation")
            | _ -> assert_failure "Failed to parse box int declaration" );
          ( "test_box_bool_declaration" >:: fun _ ->
            let prog = parse_string "let mut z: Box<bool> = box true;" in
            match prog with
-           | [ Let (true, "z", TBox TBool, expr) ] -> (
+           | [ Let (true, "z", TBox TBool, expr, _) ] -> (
                match expr.expr_desc with
-               | Unop (Box, { expr_desc = Bool true; expr_type = TBool }) -> ()
+               | Unop (Box, { expr_desc = Bool true; expr_type = TBool; _ }) ->
+                   ()
                | _ -> assert_failure "Failed to parse box operation")
            | _ -> assert_failure "Failed to parse box bool declaration" );
          ( "test_box_immutable_int_ref_declaration" >:: fun _ ->
            let prog = parse_string "let mut z: Box<&i32> = box &x;" in
            match prog with
-           | [ Let (true, "z", TBox (TRef TInt), expr) ] -> (
+           | [ Let (true, "z", TBox (TRef TInt), expr, _) ] -> (
                match expr.expr_desc with
                | Unop
                    ( Box,
@@ -125,7 +127,7 @@ let box_tests =
          ( "test_box_mutable_int_ref_declaration" >:: fun _ ->
            let prog = parse_string "let mut z: Box<&mut i32> = box &mut x;" in
            match prog with
-           | [ Let (true, "z", TBox (TRefMut TInt), expr) ] -> (
+           | [ Let (true, "z", TBox (TRefMut TInt), expr, _) ] -> (
                match expr.expr_desc with
                | Unop
                    ( Box,
@@ -148,7 +150,7 @@ let operation_tests =
          ( "test_arithmetic" >:: fun _ ->
            let prog = parse_string "let a: i32 = 10 + 5;" in
            match prog with
-           | [ Let (false, "a", TInt, expr) ] -> (
+           | [ Let (false, "a", TInt, expr, _) ] -> (
                match expr.expr_desc with
                | Binop (Add, { expr_desc = Int 10; _ }, { expr_desc = Int 5; _ })
                  ->
@@ -158,7 +160,7 @@ let operation_tests =
          ( "test_logical" >:: fun _ ->
            let prog = parse_string "let b: bool = true && false;" in
            match prog with
-           | [ Let (false, "b", TBool, expr) ] -> (
+           | [ Let (false, "b", TBool, expr, _) ] -> (
                match expr.expr_desc with
                | Binop
                    ( And,
@@ -175,12 +177,12 @@ let block_tests =
          ( "test_block_scope" >:: fun _ ->
            let prog = parse_string "{ let x: i32 = 1; let y: i32 = 2; }" in
            match prog with
-           | [ Block stmts ] -> assert_equal (List.length stmts) 2
+           | [ Block (stmts, _) ] -> assert_equal (List.length stmts) 2
            | _ -> assert_failure "Failed to parse block" );
          ( "test_immutable_ref_block_scoping" >:: fun _ ->
            let prog = parse_string "{ let x: i32 = 1; let y: &i32 = &x; }" in
            match prog with
-           | [ Block stmts ] -> assert_equal (List.length stmts) 2
+           | [ Block (stmts, _) ] -> assert_equal (List.length stmts) 2
            | _ -> assert_failure "Failed to parse immutable reference block" );
          ( "test_mutable_ref_block_scoping" >:: fun _ ->
            let prog =
@@ -188,7 +190,7 @@ let block_tests =
                "{ let mut x: i32 = 1; let mut y: &mut i32 = &mut x; }"
            in
            match prog with
-           | [ Block stmts ] -> assert_equal (List.length stmts) 2
+           | [ Block (stmts, _) ] -> assert_equal (List.length stmts) 2
            | _ -> assert_failure "Failed to parse mutable reference block" );
        ]
 

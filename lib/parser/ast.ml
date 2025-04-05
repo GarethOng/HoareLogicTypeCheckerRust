@@ -1,3 +1,7 @@
+type location = { loc_start : Lexing.position; loc_end : Lexing.position }
+
+let no_location = { loc_start = Lexing.dummy_pos; loc_end = Lexing.dummy_pos }
+
 type typ =
   | TInt (* i32 *)
   | TBool (* bool *)
@@ -36,7 +40,7 @@ type unop =
   | Copy (* copy *)
   | EndLifetime (* End lifetime of L-Value*)
 
-type expr = { expr_desc : expr_desc; expr_type : typ }
+type expr = { expr_desc : expr_desc; expr_type : typ; expr_loc : location }
 
 and expr_desc =
   | Int of int
@@ -47,6 +51,6 @@ and expr_desc =
   | Unop of unop * expr
 
 type statement =
-  | Let of bool * string * typ * expr (* bool is for mutability *)
-  | Expr of expr
-  | Block of statement list
+  | Let of bool * string * typ * expr * location (* bool is for mutability *)
+  | Expr of expr * location
+  | Block of statement list * location
