@@ -42,7 +42,7 @@ and type_var (env : Environment.t) (name : string) (loc : Ast.location) :
   | Some t ->
       if Environment.is_var_alive env name then
         (env, t, Environment.lifetime_of env name)
-      else Error.raise_error (OutOfScopeVariable name) loc
+      else Error.raise_error (UseAfterMoveError name) loc
   | None -> Error.raise_error (UndefinedVariable name) loc
 
 and type_binop (env : Environment.t) (op : Ast.binop) (e1 : Ast.expr)
@@ -135,7 +135,7 @@ and type_move (env : Environment.t) (e : Ast.expr) (loc : Ast.location) :
       match Environment.lookup env var_name with
       | Some binding ->
           if Environment.alive env binding.lifetime then (
-            Environment.remove_binding env var_name;
+            Environment.remove_lifetime env binding.lifetime;
             (env, binding.var_type, Some binding.lifetime))
           else
             Error.raise_error

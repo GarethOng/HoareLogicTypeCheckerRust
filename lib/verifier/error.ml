@@ -12,6 +12,7 @@ module Error = struct
     | BoxError of string
     | DerefError of Ast.typ
     | ScopeError of string
+    | UseAfterMoveError of string
     | DerefNonLValueError
     | WriteProhibitedError
     | ReadProhibitedError
@@ -106,6 +107,8 @@ module Error = struct
           "At %s: Dereference error - Trying to dereference of type: '%s"
           loc_str (string_of_type t)
     | ScopeError msg -> Printf.sprintf "At %s: Scope error - %s" loc_str msg
+    | UseAfterMoveError name ->
+        Printf.sprintf "At %s: Variable '%s use after moved" loc_str name
     | DerefNonLValueError ->
         Printf.sprintf "At %s: Attempting to dereference non L-Value" loc_str
     | WriteProhibitedError -> Printf.sprintf "At %s: write prohibited" loc_str
